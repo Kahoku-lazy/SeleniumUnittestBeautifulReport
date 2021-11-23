@@ -2,17 +2,17 @@ import time
 from box import BoxDriver
 
 
-# driver = BoxDriver()
+driver = BoxDriver()
 
-# driver.navigate("https://www.baidu.com")
-# time.sleep(1)
+driver.navigate("https://www.baidu.com")
+time.sleep(1)
 
-# # driver.maximize_windows()
+# driver.maximize_windows()
 
 # driver.minximize_windows()
 
 
-# time.sleep(5)
+time.sleep(5)
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait

@@ -1,6 +1,7 @@
 # import smtplib
-from time import sleep
-from selenium import webdriver 
+# from time import sleep
+from selenium import webdriver
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from enum import Enum, unique
@@ -24,7 +25,7 @@ class BoxDriver(object):
         ''' 选择浏览器 '''
 
         self._by_char = by_char             # 定位元素分隔符
-
+        driver = None
         # 选择浏览器
         if brower_type == 0 or brower_type == BrowserDriver.Chrome:
             driver = webdriver.Chrome()
@@ -34,14 +35,19 @@ class BoxDriver(object):
             driver = webdriver.Ie()
         elif brower_type == 3 or brower_type == BrowserDriver.Edge:
             driver = webdriver.Edge()
-        else:
-            driver = webdriver.PhantomJS()
+        # else:
+        #     driver = webdriver.PhantomJS()
 
         # 浏览器未打开时，抛出异常
-        try:
+        # try:
+        #     self._base_driver = driver
+        # except Exception:
+        #     raise NameError("浏览器{name}打开失败！！！".format(name=brower_type))
+        if driver is not None:
             self._base_driver = driver
-        except Exception:
+        else:
             raise NameError("浏览器{name}打开失败！！！".format(name=brower_type))
+
     
     '''  selenium 自定义定位元素的格式  '''
     def _concert_selector_to_locatot(self, selector):
@@ -49,15 +55,14 @@ class BoxDriver(object):
         定位元素格式： 定位方式标志符,定位元素。
         例如: ID定位： i, xxxx
         """
-
         if self._by_char not in selector:           # 定位元素无标志符，默认为ID定位方式
-            return By.id, selector
+            return By.ID, selector
 
         # 拆分"i, xxx"
         selector_by = selector.split(self._by_char)[0].strip()
         selector_value = selector.split(self._by_char)[1].strip()
 
-        # 定位方法
+        # 定位方法匹配
         if selector_by == "i" or selector_by == "id":
             locator = (By.ID, selector_value)
         elif selector_by == "n" or selector_by == "name":
@@ -138,13 +143,34 @@ class BoxDriver(object):
 
     ''' 浏览器页面元素相关操作方法 '''
     def click(self, selector):
-        """ 鼠标点击 """
+        """ 鼠标点击（默认左键） """
         self._locator_element(selector).click()
 
-    def click_by_text(self, seletor):
+    # 重复方法, 待删除。
+    def click_by_text(self, text):
         """ 通过链接文本点击元素 """
-        self._locator_element('p%s' % self._by)    
-    def button_enter(self, seletor):
+        self._locator_element('p%s' % self._by_char + text).click()
+
+    def button_enter(self, selector):
         """ 敲击回车键 [Enter] """
-        self._locator_element(seletor).send_keys(Keys.ENTER)
-  
+        self._locator_element(selector).send_keys(Keys.ENTER)
+
+    def type(self, selector, value):
+        """ 输入文本 """
+        el = self._locator_element(selector)
+        el.clear()
+        el.send_keys(value)
+
+    def submit(self, selector):
+        """ 递交指定表格 """
+        self._locator_element(selector).submit()
+
+    def move_to(self, selector):
+        """ 将鼠标指针移动到指定元素地点 """
+        el = self._locator_element(selector)
+        ActionChains(self._base_driver).move_to_element(el).perform()
+
+    def right_click(self, selector):
+        """ 用鼠标右键点击 """
+        el = self._locator_element(selector)
+        ActionChains(self._base_driver).context_click(el).perform()

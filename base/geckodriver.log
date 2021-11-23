@@ -1,0 +1,17 @@
+1637679895293	geckodriver	INFO	Listening on 127.0.0.1:2565
+1637679898347	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "2566" "-no-remote" "-profile" "C:\\Users\\acgn\\AppData\\Local\\Temp\\rust_mozprofileVCXGhT"
+1637679898783	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\acgn\\AppData\\Local\\Temp\\rust_mozprofileVCXGhT\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:2566/devtools/browser/9a854614-7f32-4b65-9489-3f48b76be726
+1637679901426	Marionette	INFO	Listening on port 2572
+1637679901554	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1637679908589	Marionette	WARN	TimedPromise timed out after 5000 ms: stacktrace:
+TimedPromise/<@chrome://remote/content/marionette/sync.js:238:19
+TimedPromise@chrome://remote/content/marionette/sync.js:223:10
+GeckoDriver.prototype.minimizeWindow@chrome://remote/content/marionette/driver.js:2272:11
+1637679943987	Marionette	INFO	Stopped listening on port 2572
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+[Parent 5768, IPC I/O Parent] WARNING: file /builds/worker/checkouts/gecko/ipc/chromium/src/base/process_util_win.cc:167
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+

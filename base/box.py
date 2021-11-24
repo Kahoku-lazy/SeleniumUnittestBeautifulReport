@@ -456,11 +456,8 @@ class BoxDriver(object):
         if old_cookies_value is not None:
             self._base_driver.delete_cookie(name)
 
-
-''' csv文件 '''
 class Email(object):
     """ 邮箱 发送"""
-
     def email_attachment(self, report_file):
         '''配置发送附件测试报告到邮箱'''
         '''发件相关参数'''

@@ -1,4 +1,3 @@
-# import smtplib
 import time
 from selenium import webdriver
 from selenium.webdriver import ActionChains
@@ -7,7 +6,12 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
+# 枚举类型
 from enum import Enum, unique
+# 邮箱
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 @unique
 class BrowserDriver(Enum):
@@ -451,3 +455,51 @@ class BoxDriver(object):
 
         if old_cookies_value is not None:
             self._base_driver.delete_cookie(name)
+
+
+''' csv文件 '''
+class Email(object):
+    """ 邮箱 发送"""
+
+    def email_attachment(self, report_file):
+        '''配置发送附件测试报告到邮箱'''
+        '''发件相关参数'''
+
+        try:
+            # 发件服务器
+            smtpserver = 'smtp.163.com'
+            port = 25
+            # 更改如下3项即可
+            sender = '你的邮箱'
+            psw = '你的密码'
+            receiver = '收件人'
+            msg = MIMEMultipart()
+            msg['from'] = sender
+            msg['to'] = ';'.join(receiver)
+            msg['subject'] = '这个是zentao项目自动化测试报告主题'
+
+            '''读取测试报告内容'''
+            with open(report_file, 'rb') as rp:
+                zentao_mail_body = rp.read()
+
+            '''正文'''
+            body = MIMEText(zentao_mail_body, 'html', 'utf8')
+            msg.attach(body)
+
+            '''附件'''
+            att = MIMEText(zentao_mail_body, 'base64', 'utf8')
+            att['Content-Type'] = 'application/octet-stream'
+            att['Content-Disposition'] = 'attachment;filename = "%s"' % report_file
+            msg.attach(att)
+
+            '''发送邮件'''
+            smtp = smtplib.SMTP()
+            smtp.connect(smtpserver, port)
+            smtp.login(sender, psw)
+            smtp.sendmail(sender, receiver.split(';'), msg.as_string())  # 发送
+            smtp.close()
+            print("邮件发送成功!")
+
+        except Exception as e:
+            print(e)
+            print("邮件发送失败!")

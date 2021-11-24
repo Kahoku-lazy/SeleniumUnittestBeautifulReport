@@ -1,53 +1,52 @@
-import time
+
+from tkinter.constants import S
 from box import BoxDriver
 
+class ExerciseBox:
 
-driver = BoxDriver()
+    selector_qqEmial = {"qq登录": "i, qqLoginTab", "微信登录": "i, wxLoginTab",
+                    "用户名": 'x, //*[@id="u"]',  # "i, u",
+                     "密码": "i, p", "登录": "login_button",
+                     "百度": "kw", "百度百科": "p, 百度百科"}
 
-driver.navigate("https://www.baidu.com")
-time.sleep(1)
+    def __init__(self) -> None:
 
-# driver.maximize_windows()
+        self.driver = BoxDriver()
 
-# driver.minximize_windows()
+        self.driver.navigate("https://www.baidu.com/")
 
+    def click_page(self):
+        
+        # self.driver.implicitly_wait(3)
+        # self.driver.click(self.selector_qqEmial["微信登录"])
 
-time.sleep(5)
+        # self.driver.forced_wait(3)
+        # self.driver.click(self.selector_qqEmial["qq登录"])
 
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
+        self.driver.forced_wait(3)
+        self.driver.type(self.selector_qqEmial["百度"], "otaku")
 
-# # 启动驱动程序
-# driver = webdriver.Chrome()
-# # 打开网址
-# driver.get("https://seleniumhq.github.io")
+        self.driver.button_enter(self.selector_qqEmial["百度"])
 
-# # 设置等待
-# wait = WebDriverWait(driver, 10)
+        self.driver.forced_wait(3)
+        self.driver.click(self.selector_qqEmial["百度百科"])
 
-# driver.switch_to_new_window('tab')
+    def test(self):
 
-# time.sleep(5)
+        browser_data = self.driver.get_data()
+        
+        self.click_page()
 
-# # # 存储原始窗口的 ID
-# # original_window = driver.current_window_handle
+        str_data = "当前URL地址为: {url}\n当前浏览器标签名称: {title}\n当前浏览器标签句柄：{handle}"
+        print(str_data.format(url=browser_data[0], title=browser_data[1], handle=browser_data[2]))
 
-# # # 检查一下，我们还没有打开其他的窗口
-# # assert len(driver.window_handles) == 1
+        self.driver.forced_wait(10)
 
-# # # 单击在新窗口中打开的链接
-# # driver.find_element(By.LINK_TEXT, "new window").click()
+        self.driver.quit_driver()
 
-# # # 等待新窗口或标签页
-# # wait.until(EC.number_of_windows_to_be(2))
+# 调试入口
+if __name__=='__main__':
 
-# # # 循环执行，直到找到一个新的窗口句柄
-# # for window_handle in driver.window_handles:
-# #     if window_handle != original_window:
-# #         driver.switch_to.window(window_handle)
-# #         break
+    eb = ExerciseBox()
 
-# # # 等待新标签页完成加载内容
-# # wait.until(EC.title_is("SeleniumHQ Browser Automation"))
+    eb.test()

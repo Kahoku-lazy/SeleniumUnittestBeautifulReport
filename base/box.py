@@ -1,9 +1,12 @@
 # import smtplib
-# from time import sleep
+import time
 from selenium import webdriver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.select import Select
 from enum import Enum, unique
 
 @unique
@@ -146,10 +149,10 @@ class BoxDriver(object):
         """ 鼠标点击（默认左键） """
         self._locator_element(selector).click()
 
-    # 重复方法, 待删除。
-    def click_by_text(self, text):
-        """ 通过链接文本点击元素 """
-        self._locator_element('p%s' % self._by_char + text).click()
+    # # 重复方法, 可删除。
+    # def click_by_text(self, text):
+    #     """ 通过链接文本点击元素 """
+    #     self._locator_element('p%s' % self._by_char + text).click()
 
     def button_enter(self, selector):
         """ 敲击回车键 [Enter] """
@@ -174,3 +177,277 @@ class BoxDriver(object):
         """ 用鼠标右键点击 """
         el = self._locator_element(selector)
         ActionChains(self._base_driver).context_click(el).perform()
+
+    def count_elements(self, selector):
+        """ 数一下元素的个数 """
+        els = self._locator_elements(selector)
+        return len(els)
+
+    def drag_element(self, source, target):
+        """ 拖拽元素 
+        将目标元素(source) 拖拽到 指定位置(target)"""
+        el_source = self._locator_element(source)
+        el_target = self._locator_element(target)
+
+        if self._base_driver.w3c:
+            ActionChains(self._base_driver).drag_and_drop(el_source, el_target).perform()
+        else:
+            ActionChains(self._base_driver).click_and_hold(el_source).perform()
+            ActionChains(self._base_driver).move_to_element(el_target).perform()
+            ActionChains(self._base_driver).release(el_target).perform()
+
+    def lost_focus(self):
+        """ 当前元素丢失焦点
+        :return:
+        """
+        ActionChains(self._base_driver).key_down(Keys.TAB).key_up(Keys.TAB).perform()
+
+    """ 复选框、下拉框操作 """
+    def select_by_index(self, selector, index):
+        """ index的方式 点击选择复选框，单选按钮，甚至下拉框 """
+        el = self._locate_element(selector)
+        Select(el).select_by_index(index)
+
+    def select_by_visible_text(self, selector, text):
+        """ text的方式 点击选择复选框，单选按钮，甚至下拉框 """
+        el = self._locate_element(selector)
+        Select(el).select_by_visible_text(text)
+
+    def select_by_value(self, selector, value):
+        """ value的方式 点击选择复选框，单选按钮，甚至下拉框 """
+        el = self._locate_element(selector)
+        Select(el).select_by_value(value)
+
+    """ 获取数据 """
+    def get_data(self):
+        '''获取浏览器相应的数据'''
+        # 获取当前页面的URL
+        browser_url = self._base_driver.current_url
+        # 获取当前页面的标题
+        browser_title = self._base_driver.title
+        # 获取当前窗口的窗口句柄
+        browser_handle = self._base_driver.current_window_handle
+
+        return (browser_url, browser_title, browser_handle)
+
+    # # 功能重复 可删除    
+    # def get_title(self):
+    #     ''' 获取 窗口标题. '''
+    #     return self._base_driver.title
+    # # 功能重复 可删除  
+    # def get_url(self):
+    #     """获取当前页面的URL地址"""
+    #     return self._base_driver.current_url
+
+    def get_selected_text(self, selector):
+        """ 获取 Select 元素的选择的内容
+        :param selector: 选择字符 "i, xxx"
+        :return: 字符串
+        """
+        el = self._locate_element(selector)
+        selected_opt = Select(el).first_selected_option()
+        return selected_opt.text
+
+    def get_value(self, selector):
+        """ 返回元素的 value
+        :param selector: 定位字符串
+        :return:
+        """
+        el = self._locate_element(selector)
+        return el.get_attribute("value")
+
+    def get_attribute(self, selector, attribute):
+        """ 获取元素属性的值.
+        Usage:
+        driver.get_attribute("i,el","type")
+        """
+        el = self._locate_element(selector)
+        return el.get_attribute(attribute)
+
+    def get_text(self, selector):
+        """ 获取元素文本信息
+        Usage:
+        driver.get_text("i,el")
+        """
+        el = self._locate_element(selector)
+        return el.text
+
+    def get_selected(self, selector):
+        """ 返回一个网站的选定状态
+        :param selector: selector to locate
+        :return: True False
+        """
+        el = self._locate_element(selector)
+        return el.is_selected()
+
+    def get_text_list(self, selector):
+        """ 根据selector 获取多个元素，取得元素的text 列表
+        :param selector:
+        :return: list
+        """
+
+        el_list = self._locate_elements(selector)
+
+        results = []
+        for el in el_list:
+            results.append(el.text)
+
+        return results
+
+    """ 判断页面元素"""
+    def get_exist(self, selector):
+        ''' 该方法用来确认元素是否存在，如果存在返回flag=true，否则返回false
+        :param self:
+        :param selector: 元素定位，如'id,account'
+        :return: 布尔值
+        '''
+        flag = True
+        try:
+            self._locate_element(selector)
+            return flag
+        except:
+            flag = False
+            return flag
+
+    def get_enabled(self, selector):
+        ''' 判断页面元素是否可点击
+        :param selector: 元素定位
+        :return: 布尔值
+        '''
+        if self._locate_element(selector).is_enabled():
+            return True
+        else:
+            return False
+
+    def get_displayed(self, selector):
+        """ 获取要显示的元素，返回的结果为真或假
+        Usage:
+        driver.get_display("i,el")
+        """
+        el = self._locate_element(selector)
+        return el.is_displayed()
+
+    """ web页面alert警告框 相关处理方法 """
+
+    def accept_alert(self):
+        ''' 接受警告框. '''
+        self._base_driver.switch_to.alert.accept()
+
+    def dismiss_alert(self):
+        ''' 取消可用的警报.'''
+        self._base_driver.switch_to.alert.dismiss()
+
+    def get_alert_text(self):
+        ''' 获取alert 弹框的文本'''
+        text = self._base_driver.switch_to.alert.text
+        return text
+
+    """  等待方法 """
+    def forced_wait(self, seconds):
+        """  强制等待
+        :param seconds:
+        :return:
+        """
+        time.sleep(seconds)
+
+    def implicitly_wait(self, seconds):
+        """ 隐式等待
+        :param seconds 等待时间 秒
+        """
+        self._base_driver.implicitly_wait(seconds)
+
+    def explicitly_wait(self, selector, seconds):
+        """ 显式等待
+        :param selector: 定位字符
+        :param seconds: 最长等待时间，秒
+        :return:
+        """
+        locator = self._concert_selector_to_locator(selector)
+
+        WebDriverWait(self._base_driver, seconds).until(expected_conditions.presence_of_element_located(locator))
+
+    """ 浏览器标签窗口 相关处理方法 """
+
+    def switch_to_frame(self, selector):
+        """ 切换到指定的窗口."""
+        el = self._locate_element(selector)
+        self._base_driver.switch_to.frame(el)
+
+    def switch_to_default(self):
+        """
+        Returns the current form machine form at the next higher level.
+        """
+        self._base_driver.switch_to.default_content()
+
+    def switch_to_window_by_title(self, title):
+
+        for handle in self._base_driver.window_handles:
+            self._base_driver.switch_to.window(handle)
+            if self._base_driver.title == title:
+                break
+
+            self._base_driver.switch_to.default_content()
+
+    def open_new_window(self, selector):
+        ''' 打开新窗口，并切换手柄到新打开的窗口  '''
+        original_windows = self._base_driver.current_window_handle
+        el = self._locate_element(selector)
+        el.click()
+        all_handles = self._base_driver.window_handles
+        for handle in all_handles:
+            if handle != original_windows:
+                self._base_driver._switch_to.window(handle)
+
+
+    """ 屏幕截图 相关方法"""
+    def save_window_snapshot(self, file_name):
+        """ 保存屏幕截图
+        :param file_name: the image file name and path
+        :return:
+        """
+        driver = self._base_driver
+        driver.save_screenshot(file_name)
+
+    def save_window_snapshot_by_io(self):
+        """ 保存截图为文件流
+        :return:
+        """
+        return self._base_driver.get_screenshot_as_base64()
+
+    def save_element_snapshot_by_io(self, selector):
+        """ 控件截图
+        :param selector:
+        :return:
+        """
+        el = self._locate_element(selector)
+        return el.screenshot_as_base64
+
+    """ cookies 相关方法 """
+
+    def clear_all_cookies(self):
+        """  驱动初始化后，清除浏览器所有的cookies。
+        :return:  /
+        """
+        self._base_driver.delete_all_cookies()
+
+    def add_dict_cookies(self, cookie_dict):
+        """  按字典的格式添加cookie，如果cookie已存在，则先删除后添加。
+        :param cookie_dict:
+        :return:
+        """
+        cookie_name = cookie_dict["name"]
+        cookie_value = self._base_driver.get_cookie(cookie_name)
+
+        if cookie_value is not None:
+            self._base_driver.delete_cookie(cookie_name)
+        self._base_driver.add_cookie(cookie_dict)
+
+    def remove_name_cookies(self, name):
+        """  删除指定name的cookie。
+        :param name:
+        :return: /
+        """
+        old_cookies_value = self._base_driver.get_cookie(name)
+
+        if old_cookies_value is not None:
+            self._base_driver.delete_cookie(name)

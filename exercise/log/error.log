@@ -1,0 +1,8 @@
+2021-12-01 11:36:46,074 - ERROR - tes_logging.py[:58] - error message
+2021-12-01 11:36:46,074 - CRITICAL - tes_logging.py[:59] - critical message
+2021-12-01 11:51:36,977 - ERROR - tes_logging.py[:60] - error message
+2021-12-01 11:51:36,977 - CRITICAL - tes_logging.py[:61] - critical message
+2021-12-01 11:52:56,444 - ERROR - tes_logging.py[:62] - error message
+2021-12-01 11:52:56,444 - CRITICAL - tes_logging.py[:63] - critical message
+2021-12-01 11:59:00,226 - ERROR - tes_logging.py[:62] - error message
+2021-12-01 11:59:00,226 - CRITICAL - tes_logging.py[:63] - critical message

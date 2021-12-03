@@ -13,6 +13,13 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+# 数据处理
+import csv
+import xlrd
+import yaml
+from yaml.loader import Loader
+
+''' 浏览器类型 '''
 @unique
 class BrowserDriver(Enum):
     '''定义支持的浏览器，支持Chrome、Firefox、Ie、Edge'''
@@ -22,6 +29,8 @@ class BrowserDriver(Enum):
     Ie = 2
     Edge = 3
 
+
+''' 公共方法 '''
 class BoxDriver(object):
     ''' 封装 selenium 工具中的方法 '''
 
@@ -456,6 +465,54 @@ class BoxDriver(object):
         if old_cookies_value is not None:
             self._base_driver.delete_cookie(name)
 
+class DataProcessing(object):
+
+    def read_csv(self, file_path):
+        """ 列表方式读取 """
+        data = []
+        with open(file_path, 'r') as f:
+            reader = csv.reader(f)
+            for row in reader:
+                data.append(row)
+        return data
+
+    def read_dict_csv(self, file_path):
+        """ 字典方式读取, 以数组方式返回 """
+        data = []
+        with open(file_path, 'r') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                data.append(row)
+        return data
+
+    def read_yaml(self, file_path):
+        """ yaml文件读取 """
+        with open(file_path, 'r') as f:
+            reader = yaml.load(f.read(), Loader=yaml.Loader)
+        return reader
+
+    # def read_xls(self, file_path):
+    #     """ 只支持打开xls表格 """
+    #     data_list = []
+    #     data_dict = {}
+
+    #     xls = xlrd.open_workbook(file_path)
+    #     for i in range(len(xls.sheets())):
+    #         data_list.append((xls.sheets()[i].name, xls.sheets()[i].ncols, xls.sheets()[i].nrows))          # 标签页
+    #         # print("data_list: ", data_list)
+    #         # sheet1_name = sheet.name   
+    #         # sheet1_cols = sheet1.ncols  
+    #         # sheet1_nrows = sheet1.nrows
+    #         # print('Sheet1 Name: %s\nSheet1 cols: %s\nSheet1 rows: %s' % (sheet1_name, sheet1_cols, sheet1_nrows))
+    #     # data_dict["label"] = data_list
+    #     # sheet1_nrows4 = sheet1.row_values(4)    # 行
+    #     # sheet1_cols2 = sheet1.col_values(2)     # 列
+    #     # """del list[:]、 ls*= 0、 ls=[]"""
+    #     # data_list.clear()
+    #         cell = xls.sheets()[i].get_rows()
+    #         for row in cell:
+    #             pass
+
 class Email(object):
     """ 邮箱 发送"""
     def email_attachment(self, report_file):
@@ -500,3 +557,47 @@ class Email(object):
         except Exception as e:
             print(e)
             print("邮件发送失败!")
+
+
+''' 测试系统的最基础的页面类，是所有其他页面的基类 ''' 
+class BasePage(object):
+    base_driver = None
+
+    def __init__(self, driver: BoxDriver):
+        """  构造方法
+        :param driver: 指定了参数类型，BoxDriver
+        :param logger:
+        """
+        self.base_driver = driver
+
+    def open(self, url):
+        """   打开页面
+        :param url: 页面链接地址
+        """
+        self.base_driver.navigate(url)
+        self.base_driver.maximize_window()
+        self.base_driver.forced_wait(2)
+
+# 调试入口
+if __name__=='__main__':
+
+    dt = DataProcessing()
+    
+    # print("读取的数据：", dt.read_xls("xls_exercise.xls"))
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    pass

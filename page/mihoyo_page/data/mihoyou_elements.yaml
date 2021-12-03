@@ -1,0 +1,9 @@
+URL: https://www.mihoyo.com/?page=product
+
+MAIN_PAGE:
+  首页: c, header__navbar-link nuxt-link-active
+  产品信息: c, header__navbar-link header__navbar-link--active
+  了解我们: c, header__navbar-link
+  加入我们: c, header__navbar-link
+  新闻动态: c, header__navbar-link
+  LANGUE_SELECT:  c, lang-select

@@ -1,0 +1,2 @@
+index,test_dir,test_pattern
+0,"./case/mihoyo_case/","mihoyo_test_*.py"

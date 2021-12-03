@@ -29,7 +29,6 @@ class BrowserDriver(Enum):
     Ie = 2
     Edge = 3
 
-
 ''' 公共方法 '''
 class BoxDriver(object):
     ''' 封装 selenium 工具中的方法 '''
@@ -37,7 +36,7 @@ class BoxDriver(object):
     _base_driver = None
     _browser_driver_path = None
 
-    def __init__(self, brower_type=BrowserDriver.Chrome, by_char=",") -> None:
+    def __init__(self, brower_type=3, by_char=",") -> None:
         ''' 选择浏览器 '''
 
         self._by_char = by_char             # 定位元素分隔符
@@ -561,6 +560,7 @@ class Email(object):
 
 ''' 测试系统的最基础的页面类，是所有其他页面的基类 ''' 
 class BasePage(object):
+
     base_driver = None
 
     def __init__(self, driver: BoxDriver):
@@ -575,13 +575,15 @@ class BasePage(object):
         :param url: 页面链接地址
         """
         self.base_driver.navigate(url)
-        self.base_driver.maximize_window()
+        # self.base_driver.maximize_window()
         self.base_driver.forced_wait(2)
 
 # 调试入口
 if __name__=='__main__':
 
     dt = DataProcessing()
+
+    bp = BasePage()
     
     # print("读取的数据：", dt.read_xls("xls_exercise.xls"))
     

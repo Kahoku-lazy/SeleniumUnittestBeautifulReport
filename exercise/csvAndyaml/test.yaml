@@ -1,0 +1,16 @@
+EMAIL:
+  Smtp_Server: smtp.mxhichina.com
+  on-of: on
+
+DB:
+  host: localhost
+  username: myself
+  password: skyyj
+  port: 3306
+  database: mystudy
+
+list_t:
+  l1: [1,2,3,4]
+
+t1: (1,2,3,4)
+

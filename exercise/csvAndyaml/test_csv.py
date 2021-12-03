@@ -12,10 +12,10 @@ with f:
         
 # print("rc: ", rc)
 
-with open('test.csv', 'r') as f:
+with open('../../runner/data/runner.csv', 'r', encoding='gbk') as f:
     reader = csv.DictReader(f)
     print("reader: ", reader)
     for row in reader:
         rb.append(row)
        
-# print("rb: ", rb)
+print("rb: ", rb)

@@ -1,11 +1,10 @@
 import unittest
-from unittest import TestSuite
 import time
 from BeautifulReport import BeautifulReport
+from SeleniumUnittestBeautifulReport.base.box import DataCommon, EmailCommon
 
-# from seleniumPython3.base.box import DataProcessing
-# from seleniumPython3.case.mihoyo_case.mihoyo_test_main import MihoyoTest
-from seleniumPython3.base.box import DataProcessing
+
+# from SeleniumUnittestBeautifulReport.data.file_path import FilePath
 
 
 class Runner(object):
@@ -17,21 +16,23 @@ class Runner(object):
         # log日志保存路径
         # logger_file = "./runner/log/zentao_automate_log_%s.log" % test_time
 
-        # 执行的用例
-        csv_test = DataProcessing().read_dict_csv("./runner/data/runner.csv")               # 执行的用例路径、命名格式
-        test_dir = csv_test[0]["test_dir"]
-        test_pattern = csv_test[0]["test_pattern"]
+        # 待执行用例
+        csv_test = DataCommon().read_config_section("./runner/config/runner_config.ini", 'unit_case')  # 执行的用例路径、命名格式
+        # csv_test = FilePath().runner_config()  # 待调试方案
+        test_dir = csv_test[1][1]
+        test_pattern = csv_test[2][1]
+        print(csv_test)
         dis = unittest.defaultTestLoader.discover(test_dir, pattern=test_pattern)
 
         # 报告文件保存路径
         report_file = "./runner/report/mihoyo_automate_report_%s.html" % test_time
         # 执行用例生成报告
         runner = BeautifulReport(dis)
-        runner.report(filename=report_file,  description="具体测试报告内容如下: ")
+        runner.report(filename=report_file, description="具体测试报告内容如下: ")
 
         # 发送测试报告到指定邮箱
-        # Email().email_attachment(report_file)
+        EmailCommon().email_attachment(report_file)
+
 
 if __name__ == '__main__':
-    csv_data = DataProcessing().read_dict_csv("./data/runner.csv")
-    print(csv_data)
+    Runner().run_test()

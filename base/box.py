@@ -636,9 +636,9 @@ class EmailCommon(object):
             smtpserver = 'smtp.qq.com'
             port = 25
             # 更改如下3项即可
-            sender = "otaku.acgn@qq.com"  # 你的邮箱
-            psw = 'kmafhmdxvwnodgcg'  # 授权码
-            receiver = '1003596831@qq.com'  # 收件人邮箱
+            sender = "你的邮箱"  # 你的邮箱
+            psw = '授权码'  # 授权码
+            receiver = '收件人邮箱'  # 收件人邮箱
             msg = MIMEMultipart()
             msg['from'] = sender
             msg['to'] = ';'.join(receiver)
